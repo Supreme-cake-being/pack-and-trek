@@ -7,12 +7,14 @@ import {
   gramsToKg,
 } from "../utils/weight";
 import { colors } from "../constants/colors";
+import { useI18n } from "../i18n";
 
 interface Props {
   items: Item[];
 }
 
 export function WeightSummary({ items }: Props) {
+  const { t } = useI18n();
   const total = calculateTotalWeight(items);
   const packed = calculatePackedWeight(items);
   const remaining = calculateRemainingWeight(items);
@@ -20,24 +22,24 @@ export function WeightSummary({ items }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.titleRow}>
-        <Text style={styles.title}>Backpack Weight</Text>
+        <Text style={styles.title}>{t("trip.backpackWeight")}</Text>
 
-        <Text style={styles.total}>{gramsToKg(total)} kg</Text>
+        <Text style={styles.total}>{gramsToKg(total)} {t("common.kilograms")}</Text>
       </View>
 
       <View style={styles.stats}>
         <View style={styles.stat}>
-          <Text style={styles.statValue}>{gramsToKg(packed)} kg</Text>
+          <Text style={styles.statValue}>{gramsToKg(packed)} {t("common.kilograms")}</Text>
 
-          <Text style={styles.statLabel}>Packed</Text>
+          <Text style={styles.statLabel}>{t("trip.packed")}</Text>
         </View>
 
         <View style={styles.divider} />
 
         <View style={styles.stat}>
-          <Text style={styles.statValue}>{gramsToKg(remaining)} kg</Text>
+          <Text style={styles.statValue}>{gramsToKg(remaining)} {t("common.kilograms")}</Text>
 
-          <Text style={styles.statLabel}>Remaining</Text>
+          <Text style={styles.statLabel}>{t("trip.remaining")}</Text>
         </View>
 
         <View style={styles.divider} />
@@ -45,7 +47,7 @@ export function WeightSummary({ items }: Props) {
         <View style={styles.stat}>
           <Text style={styles.statValue}>{items.length}</Text>
 
-          <Text style={styles.statLabel}>Items</Text>
+          <Text style={styles.statLabel}>{t("common.items")}</Text>
         </View>
       </View>
     </View>

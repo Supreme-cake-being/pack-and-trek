@@ -14,9 +14,11 @@ import { useTrips } from "../src/hooks/useTrips";
 import { TripCard } from "../src/components/TripCard";
 import { EmptyState } from "../src/components/EmptyState";
 import { colors } from "../src/constants/colors";
+import { useI18n } from "../src/i18n";
 
 export default function HomeScreen() {
   const { trips, loading, removeTrip, reload } = useTrips();
+  const { t } = useI18n();
 
   useFocusEffect(
     useCallback(() => {
@@ -26,15 +28,15 @@ export default function HomeScreen() {
 
   const handleDelete = (tripId: string) => {
     Alert.alert(
-      "Delete trip?",
-      "This will permanently remove the trip and its packing list.",
+      t("confirm.deleteTrip"),
+      t("confirm.deleteTripDescription"),
       [
         {
-          text: "Cancel",
+          text: t("common.cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () => removeTrip(tripId),
         },
@@ -46,11 +48,10 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.hero}>
         <View>
-          <Text style={styles.eyebrow}>YOUR ADVENTURES</Text>
+          <Text style={styles.eyebrow}>{t("home.adventures")}</Text>
 
           <Text style={styles.heading}>
-            Pack smart.{"\n"}
-            Trek further.
+            {t("home.tagline")}
           </Text>
         </View>
 
@@ -61,12 +62,12 @@ export default function HomeScreen() {
 
       {loading ? (
         <View style={styles.loading}>
-          <Text style={styles.loadingText}>Loading trips...</Text>
+          <Text style={styles.loadingText}>{t("home.loading")}</Text>
         </View>
       ) : trips.length === 0 ? (
         <EmptyState
-          title="No trips yet"
-          description="Create your first hiking trip and Pack&Trek will build a personalized packing checklist."
+          title={t("home.emptyTitle")}
+          description={t("home.emptyDescription")}
         />
       ) : (
         <FlatList
@@ -87,7 +88,7 @@ export default function HomeScreen() {
       <Pressable style={styles.fab} onPress={() => router.push("/new-trip")}>
         <Ionicons name="add" size={28} color={colors.white} />
 
-        <Text style={styles.fabText}>Plan New Trip</Text>
+        <Text style={styles.fabText}>{t("home.planNewTrip")}</Text>
       </Pressable>
     </View>
   );

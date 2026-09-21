@@ -16,46 +16,48 @@ import { colors } from "../src/constants/colors";
 import { WeatherCondition } from "../src/types";
 import { createTrip } from "../src/data/recommendations";
 import { saveTrip } from "../src/storage/storage";
+import { useI18n } from "../src/i18n";
 
 const WEATHER_OPTIONS: {
   value: WeatherCondition;
-  label: string;
+  labelKey: string;
   icon: string;
-  description: string;
+  descriptionKey: string;
 }[] = [
   {
     value: "sunny",
-    label: "Sunny",
+    labelKey: "weather.sunny",
     icon: "sunny-outline",
-    description: "Clear and dry",
+    descriptionKey: "newTrip.weatherSunnyDescription",
   },
   {
     value: "rainy",
-    label: "Rainy",
+    labelKey: "weather.rainy",
     icon: "rainy-outline",
-    description: "Wet conditions",
+    descriptionKey: "newTrip.weatherRainyDescription",
   },
   {
     value: "cold",
-    label: "Cold",
+    labelKey: "weather.cold",
     icon: "snow-outline",
-    description: "Low temperatures",
+    descriptionKey: "newTrip.weatherColdDescription",
   },
   {
     value: "hot",
-    label: "Hot",
+    labelKey: "weather.hot",
     icon: "thermometer-outline",
-    description: "High temperatures",
+    descriptionKey: "newTrip.weatherHotDescription",
   },
   {
     value: "variable",
-    label: "Variable",
+    labelKey: "weather.variable",
     icon: "partly-sunny-outline",
-    description: "Mixed weather",
+    descriptionKey: "newTrip.weatherVariableDescription",
   },
 ];
 
 export default function NewTripScreen() {
+  const { t } = useI18n();
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("2");
   const [weather, setWeather] = useState<WeatherCondition>("sunny");
@@ -65,12 +67,12 @@ export default function NewTripScreen() {
     const days = Number(duration);
 
     if (!title.trim()) {
-      Alert.alert("Trip name required", "Please enter a name for your trip.");
+      Alert.alert(t("validation.tripNameRequired"), t("validation.tripNameRequiredDescription"));
       return;
     }
 
     if (!Number.isInteger(days) || days < 1) {
-      Alert.alert("Invalid duration", "Trip duration must be at least 1 day.");
+      Alert.alert(t("validation.invalidDuration"), t("validation.invalidDurationDescription"));
       return;
     }
 
@@ -83,7 +85,7 @@ export default function NewTripScreen() {
 
       router.replace(`/trip/${trip.id}`);
     } catch {
-      Alert.alert("Error", "Could not save the trip.");
+      Alert.alert(t("confirm.error"), t("validation.saveError"));
     } finally {
       setSaving(false);
     }
@@ -96,25 +98,22 @@ export default function NewTripScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.intro}>
-        <Text style={styles.title}>Plan your adventure</Text>
+        <Text style={styles.title}>{t("newTrip.introTitle")}</Text>
 
-        <Text style={styles.description}>
-          Tell us about your hike and we’ll create a starter packing list for
-          you.
-        </Text>
+        <Text style={styles.description}>{t("newTrip.introDescription")}</Text>
       </View>
 
-      <Text style={styles.label}>TRIP NAME</Text>
+      <Text style={styles.label}>{t("newTrip.tripName")}</Text>
 
       <TextInput
         value={title}
         onChangeText={setTitle}
-        placeholder="e.g. Carpathian Weekend"
+        placeholder={t("newTrip.tripNamePlaceholder")}
         placeholderTextColor={colors.slateLighter}
         style={styles.input}
       />
 
-      <Text style={styles.label}>DURATION</Text>
+      <Text style={styles.label}>{t("newTrip.duration")}</Text>
 
       <View style={styles.durationContainer}>
         <TextInput
@@ -124,10 +123,10 @@ export default function NewTripScreen() {
           style={styles.durationInput}
         />
 
-        <Text style={styles.days}>days</Text>
+        <Text style={styles.days}>{t("newTrip.days")}</Text>
       </View>
 
-      <Text style={styles.label}>EXPECTED WEATHER</Text>
+      <Text style={styles.label}>{t("newTrip.weather")}</Text>
 
       <View style={styles.weatherGrid}>
         {WEATHER_OPTIONS.map((option) => {
@@ -154,11 +153,11 @@ export default function NewTripScreen() {
                   selected && styles.weatherLabelSelected,
                 ]}
               >
-                {option.label}
+                {t(option.labelKey)}
               </Text>
 
               <Text style={styles.weatherDescription}>
-                {option.description}
+                {t(option.descriptionKey)}
               </Text>
             </Pressable>
           );
@@ -168,10 +167,7 @@ export default function NewTripScreen() {
       <View style={styles.infoCard}>
         <Ionicons name="sparkles-outline" size={22} color={colors.amber} />
 
-        <Text style={styles.infoText}>
-          Pack&Trek will automatically add essential gear, clothing, hygiene and
-          electronics based on your trip.
-        </Text>
+        <Text style={styles.infoText}>{t("newTrip.info")}</Text>
       </View>
 
       <Pressable
@@ -180,7 +176,7 @@ export default function NewTripScreen() {
         onPress={handleCreate}
       >
         <Text style={styles.createButtonText}>
-          {saving ? "Creating..." : "Create Packing List"}
+          {saving ? t("newTrip.creating") : t("newTrip.createPackingList")}
         </Text>
 
         <Ionicons name="arrow-forward" size={20} color={colors.white} />

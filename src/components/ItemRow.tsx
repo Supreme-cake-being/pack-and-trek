@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { Item } from "../types";
 import { colors } from "../constants/colors";
+import { useI18n } from "../i18n";
 
 interface Props {
   item: Item;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function ItemRow({ item, onToggle, onEdit, onDelete }: Props) {
+  const { t } = useI18n();
   return (
     <View style={styles.container}>
       <Pressable
@@ -29,7 +31,8 @@ export function ItemRow({ item, onToggle, onEdit, onDelete }: Props) {
         </Text>
 
         <Text style={styles.weight}>
-          {item.weightGrams} g{item.isCustom ? " • Custom" : ""}
+          {item.weightGrams} {t("common.grams")}
+          {item.isCustom ? ` • ${t("item.customItem")}` : ""}
         </Text>
       </Pressable>
 

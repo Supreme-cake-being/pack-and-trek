@@ -13,6 +13,7 @@ import { Item, ItemCategory } from "../types";
 
 import { colors } from "../constants/colors";
 import { createId } from "../utils/id";
+import { useI18n } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -31,6 +32,7 @@ const CATEGORIES: ItemCategory[] = [
 ];
 
 export function AddItemModal({ visible, item, onClose, onSave }: Props) {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [weight, setWeight] = useState("");
   const [category, setCategory] = useState<ItemCategory>("gear");
@@ -78,25 +80,25 @@ export function AddItemModal({ visible, item, onClose, onSave }: Props) {
         <View style={styles.modal}>
           <View style={styles.header}>
             <Text style={styles.title}>
-              {item ? "Edit Item" : "Add Custom Item"}
+              {item ? t("item.editItem") : t("item.addCustomItem")}
             </Text>
 
             <Pressable onPress={onClose}>
-              <Text style={styles.close}>Cancel</Text>
+              <Text style={styles.close}>{t("common.cancel")}</Text>
             </Pressable>
           </View>
 
-          <Text style={styles.label}>ITEM NAME</Text>
+          <Text style={styles.label}>{t("item.nameLabel")}</Text>
 
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Trekking poles"
+            placeholder={t("item.nameExample")}
             placeholderTextColor={colors.slateLighter}
             style={styles.input}
           />
 
-          <Text style={styles.label}>WEIGHT</Text>
+          <Text style={styles.label}>{t("item.weightLabel")}</Text>
 
           <View style={styles.weightInput}>
             <TextInput
@@ -108,10 +110,10 @@ export function AddItemModal({ visible, item, onClose, onSave }: Props) {
               style={styles.weightTextInput}
             />
 
-            <Text style={styles.unit}>grams</Text>
+            <Text style={styles.unit}>{t("common.grams")}</Text>
           </View>
 
-          <Text style={styles.label}>CATEGORY</Text>
+          <Text style={styles.label}>{t("item.categoryLabel")}</Text>
 
           <View style={styles.categories}>
             {CATEGORIES.map((value) => {
@@ -129,7 +131,7 @@ export function AddItemModal({ visible, item, onClose, onSave }: Props) {
                       selected && styles.categoryTextSelected,
                     ]}
                   >
-                    {value}
+                    {t(`categories.${value}`)}
                   </Text>
                 </Pressable>
               );
@@ -138,7 +140,7 @@ export function AddItemModal({ visible, item, onClose, onSave }: Props) {
 
           <Pressable style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveText}>
-              {item ? "Save Changes" : "Add Item"}
+              {item ? t("item.saveChanges") : t("trip.addItem")}
             </Text>
           </Pressable>
         </View>

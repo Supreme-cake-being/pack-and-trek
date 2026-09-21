@@ -8,6 +8,7 @@ import {
   calculateTotalWeight,
   gramsToKg,
 } from "../utils/weight";
+import { useI18n } from "../i18n";
 
 interface Props {
   trip: Trip;
@@ -24,6 +25,7 @@ const WEATHER_ICONS: Record<Trip["weatherCondition"], string> = {
 };
 
 export function TripCard({ trip, onPress, onDelete }: Props) {
+  const { t } = useI18n();
   const total = calculateTotalWeight(trip.items);
   const packed = calculatePackedWeight(trip.items);
 
@@ -44,14 +46,13 @@ export function TripCard({ trip, onPress, onDelete }: Props) {
         <Text style={styles.title}>{trip.title}</Text>
 
         <Text style={styles.meta}>
-          {trip.durationDays} {trip.durationDays === 1 ? "day" : "days"}
-          {" • "}
-          {trip.items.length} items
+          {trip.durationDays} {t("trip.days")} • {trip.items.length}{" "}
+          {t("common.items")}
         </Text>
 
         <View style={styles.weightRow}>
           <Text style={styles.weight}>
-            {gramsToKg(packed)} / {gramsToKg(total)} kg packed
+            {gramsToKg(packed)} / {gramsToKg(total)} {t("common.kilograms")} {t("trip.packed")}
           </Text>
         </View>
       </View>

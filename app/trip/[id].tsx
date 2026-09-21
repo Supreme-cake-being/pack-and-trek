@@ -14,24 +14,18 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { colors } from "../../src/constants/colors";
 import { useTrips } from "../../src/hooks/useTrips";
-import { Item, ItemCategory } from "../../src/types";
+import { Item } from "../../src/types";
 
 import { WeightSummary } from "../../src/components/WeightSummary";
 import { CategorySection } from "../../src/components/CategorySection";
 import { AddItemModal } from "../../src/components/AddItemModal";
+import { categories } from "../../src/constants/categories";
+import { useI18n } from "../../src/i18n";
 
 type Filter = "all" | "packed" | "unpacked";
 
-const CATEGORIES: ItemCategory[] = [
-  "gear",
-  "clothing",
-  "food",
-  "hygiene",
-  "electronics",
-  "other",
-];
-
 export default function TripDetailScreen() {
+  const { t } = useI18n();
   const { id } = useLocalSearchParams<{
     id: string;
   }>();
@@ -70,10 +64,10 @@ export default function TripDetailScreen() {
   if (!trip) {
     return (
       <View style={styles.notFound}>
-        <Text style={styles.notFoundTitle}>Trip not found</Text>
+        <Text style={styles.notFoundTitle}>{t("trip.notFound")}</Text>
 
         <Pressable onPress={() => router.back()}>
-          <Text style={styles.backText}>Go back</Text>
+          <Text style={styles.backText}>{t("common.back")}</Text>
         </Pressable>
       </View>
     );
@@ -123,15 +117,15 @@ export default function TripDetailScreen() {
 
   const handleDelete = (item: Item) => {
     Alert.alert(
-      "Delete item?",
-      `Remove "${item.name}" from this packing list?`,
+      t("confirm.deleteItem"),
+      t("trip.removeItem"),
       [
         {
-          text: "Cancel",
+          text: t("common.cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () =>
             updateItems(trip.items.filter((current) => current.id !== item.id)),
@@ -151,8 +145,7 @@ export default function TripDetailScreen() {
             <Text style={styles.title}>{trip.title}</Text>
 
             <Text style={styles.subtitle}>
-              {trip.durationDays} {trip.durationDays === 1 ? "day" : "days"} •{" "}
-              {trip.weatherCondition}
+              {trip.durationDays} {t("trip.days")} • {t(`weather.${trip.weatherCondition}`)}
             </Text>
           </View>
 
@@ -171,7 +164,7 @@ export default function TripDetailScreen() {
           <TextInput
             value={search}
             onChangeText={setSearch}
-            placeholder="Search packing list..."
+            placeholder={t("trip.searchItems")}
             placeholderTextColor={colors.slateLighter}
             style={styles.searchInput}
           />
@@ -184,9 +177,9 @@ export default function TripDetailScreen() {
         >
           {(
             [
-              ["all", "All"],
-              ["unpacked", "Unpacked"],
-              ["packed", "Packed"],
+              ["all", "trip.all"],
+              ["unpacked", "trip.unpacked"],
+              ["packed", "trip.packed"],
             ] as [Filter, string][]
           ).map(([value, label]) => {
             const selected = filter === value;
@@ -203,18 +196,19 @@ export default function TripDetailScreen() {
                     selected && styles.filterTextSelected,
                   ]}
                 >
-                  {label}
+                  {t(label)}
                 </Text>
               </Pressable>
             );
           })}
         </ScrollView>
 
-        {CATEGORIES.map((category) => (
+        {categories.map((category) => (
           <CategorySection
-            key={category}
-            category={category}
-            items={filteredItems.filter((item) => item.category === category)}
+            key={category.id}
+            titleKey={category.labelKey}
+            icon={category.icon}
+            items={filteredItems.filter((item) => item.category === category.id)}
             onToggle={toggleItem}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -229,10 +223,10 @@ export default function TripDetailScreen() {
               color={colors.slateLighter}
             />
 
-            <Text style={styles.noResultsTitle}>No items found</Text>
+            <Text style={styles.noResultsTitle}>{t("trip.noItems")}</Text>
 
             <Text style={styles.noResultsText}>
-              Try changing your search or filter.
+              {t("trip.noItemsDescription")}
             </Text>
           </View>
         )}
@@ -241,7 +235,7 @@ export default function TripDetailScreen() {
       <Pressable style={styles.addButton} onPress={handleAdd}>
         <Ionicons name="add" size={24} color={colors.white} />
 
-        <Text style={styles.addButtonText}>Add Item</Text>
+        <Text style={styles.addButtonText}>{t("trip.addItem")}</Text>
       </Pressable>
 
       <AddItemModal

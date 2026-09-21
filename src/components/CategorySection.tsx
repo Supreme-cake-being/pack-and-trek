@@ -10,9 +10,9 @@ type CategorySectionProps = {
   titleKey: string;
   icon: string;
   items: Item[];
-  onToggle: (itemId: string) => void;
+  onToggle: (item: Item) => void;
   onEdit: (item: Item) => void;
-  onDelete: (itemId: string) => void;
+  onDelete: (item: Item) => void;
 };
 
 export function CategorySection({
@@ -49,9 +49,9 @@ export function CategorySection({
         <ItemRow
           key={item.id}
           item={item}
-          onToggle={() => onToggle(item.id)}
+          onToggle={() => onToggle(item)}
           onEdit={() => onEdit(item)}
-          onDelete={() => onDelete(item.id)}
+          onDelete={() => onDelete(item)}
         />
       ))}
     </View>
