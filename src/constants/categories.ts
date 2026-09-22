@@ -4,7 +4,7 @@ export const categories = [
   {
     id: "gear",
     labelKey: "categories.gear",
-    icon: "backpack",
+    icon: "briefcase-outline",
   },
   {
     id: "clothing",
