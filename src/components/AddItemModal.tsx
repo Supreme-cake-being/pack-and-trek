@@ -33,6 +33,7 @@ const CATEGORIES: ItemCategory[] = [
 
 export function AddItemModal({ visible, item, onClose, onSave }: Props) {
   const { t } = useI18n();
+
   const [name, setName] = useState("");
   const [weight, setWeight] = useState("");
   const [category, setCategory] = useState<ItemCategory>("gear");
@@ -161,7 +162,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
-    paddingBottom: 34,
   },
 
   header: {
