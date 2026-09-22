@@ -14,6 +14,7 @@ import { Item, ItemCategory } from "../types";
 import { colors } from "../constants/colors";
 import { createId } from "../utils/id";
 import { useI18n } from "../i18n";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   visible: boolean;
@@ -33,6 +34,7 @@ const CATEGORIES: ItemCategory[] = [
 
 export function AddItemModal({ visible, item, onClose, onSave }: Props) {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
 
   const [name, setName] = useState("");
   const [weight, setWeight] = useState("");
@@ -78,7 +80,14 @@ export function AddItemModal({ visible, item, onClose, onSave }: Props) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.modal}>
+        <View
+          style={[
+            styles.modal,
+            {
+              paddingBottom: insets.bottom + 20,
+            },
+          ]}
+        >
           <View style={styles.header}>
             <Text style={styles.title}>
               {item ? t("item.editItem") : t("item.addCustomItem")}
