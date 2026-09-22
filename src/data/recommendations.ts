@@ -1,70 +1,80 @@
 import { Item, ItemCategory, Trip, WeatherCondition } from "../types";
 import { createId } from "../utils/id";
+import { en } from "../i18n/locales/en";
 
 interface RecommendationItem {
-  name: string;
+  nameKey: string;
   category: ItemCategory;
   weightGrams: number;
 }
 
+function translateEnglishRecommendation(key: string): string {
+  const itemKey = key.replace(
+    "recommendations.",
+    "",
+  ) as keyof typeof en.recommendations;
+
+  return en.recommendations[itemKey] ?? key;
+}
+
 const BASE_ITEMS: RecommendationItem[] = [
   {
-    name: "Backpack",
+    nameKey: "recommendations.backpack",
     category: "gear",
     weightGrams: 1200,
   },
   {
-    name: "Sleeping bag",
+    nameKey: "recommendations.sleepingBag",
     category: "gear",
     weightGrams: 900,
   },
   {
-    name: "Sleeping mat",
+    nameKey: "recommendations.sleepingMat",
     category: "gear",
     weightGrams: 500,
   },
   {
-    name: "Tent",
+    nameKey: "recommendations.tent",
     category: "gear",
     weightGrams: 1800,
   },
   {
-    name: "Headlamp",
+    nameKey: "recommendations.headlamp",
     category: "electronics",
     weightGrams: 100,
   },
   {
-    name: "Water bottle",
+    nameKey: "recommendations.waterBottle",
     category: "gear",
     weightGrams: 150,
   },
   {
-    name: "First aid kit",
+    nameKey: "recommendations.firstAidKit",
     category: "hygiene",
     weightGrams: 250,
   },
   {
-    name: "Map / compass",
+    nameKey: "recommendations.mapCompass",
     category: "gear",
     weightGrams: 100,
   },
   {
-    name: "Toothbrush",
+    nameKey: "recommendations.toothbrush",
     category: "hygiene",
     weightGrams: 20,
   },
   {
-    name: "Toothpaste",
+    nameKey: "recommendations.toothpaste",
     category: "hygiene",
     weightGrams: 30,
   },
   {
-    name: "Phone",
+    nameKey: "recommendations.phone",
     category: "electronics",
     weightGrams: 200,
   },
   {
-    name: "Power bank",
+    nameKey: "recommendations.powerBank",
     category: "electronics",
     weightGrams: 250,
   },
@@ -73,17 +83,17 @@ const BASE_ITEMS: RecommendationItem[] = [
 const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
   sunny: [
     {
-      name: "Sun hat",
+      nameKey: "recommendations.sunHat",
       category: "clothing",
       weightGrams: 80,
     },
     {
-      name: "Sunscreen",
+      nameKey: "recommendations.sunscreen",
       category: "hygiene",
       weightGrams: 100,
     },
     {
-      name: "Sunglasses",
+      nameKey: "recommendations.sunglasses",
       category: "clothing",
       weightGrams: 30,
     },
@@ -91,17 +101,17 @@ const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
 
   rainy: [
     {
-      name: "Rain jacket",
+      nameKey: "recommendations.rainJacket",
       category: "clothing",
       weightGrams: 350,
     },
     {
-      name: "Rain pants",
+      nameKey: "recommendations.rainPants",
       category: "clothing",
       weightGrams: 250,
     },
     {
-      name: "Backpack rain cover",
+      nameKey: "recommendations.backpackRainCover",
       category: "gear",
       weightGrams: 150,
     },
@@ -109,27 +119,27 @@ const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
 
   cold: [
     {
-      name: "Insulated jacket",
+      nameKey: "recommendations.insulatedJacket",
       category: "clothing",
       weightGrams: 600,
     },
     {
-      name: "Thermal base layer",
+      nameKey: "recommendations.thermalBaseLayer",
       category: "clothing",
       weightGrams: 300,
     },
     {
-      name: "Warm hat",
+      nameKey: "recommendations.warmHat",
       category: "clothing",
       weightGrams: 80,
     },
     {
-      name: "Gloves",
+      nameKey: "recommendations.gloves",
       category: "clothing",
       weightGrams: 100,
     },
     {
-      name: "Warm socks",
+      nameKey: "recommendations.warmSocks",
       category: "clothing",
       weightGrams: 100,
     },
@@ -137,22 +147,22 @@ const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
 
   hot: [
     {
-      name: "Lightweight shirt",
+      nameKey: "recommendations.lightweightShirt",
       category: "clothing",
       weightGrams: 150,
     },
     {
-      name: "Lightweight shorts",
+      nameKey: "recommendations.lightweightShorts",
       category: "clothing",
       weightGrams: 150,
     },
     {
-      name: "Extra water bottle",
+      nameKey: "recommendations.extraWaterBottle",
       category: "gear",
       weightGrams: 150,
     },
     {
-      name: "Sunscreen",
+      nameKey: "recommendations.sunscreen",
       category: "hygiene",
       weightGrams: 100,
     },
@@ -160,12 +170,12 @@ const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
 
   variable: [
     {
-      name: "Light rain jacket",
+      nameKey: "recommendations.lightRainJacket",
       category: "clothing",
       weightGrams: 300,
     },
     {
-      name: "Light fleece",
+      nameKey: "recommendations.lightFleece",
       category: "clothing",
       weightGrams: 350,
     },
@@ -174,17 +184,17 @@ const WEATHER_ITEMS: Record<WeatherCondition, RecommendationItem[]> = {
 
 const LONG_TRIP_ITEMS: RecommendationItem[] = [
   {
-    name: "Extra shirt",
+    nameKey: "recommendations.extraShirt",
     category: "clothing",
     weightGrams: 180,
   },
   {
-    name: "Extra underwear",
+    nameKey: "recommendations.extraUnderwear",
     category: "clothing",
     weightGrams: 100,
   },
   {
-    name: "Extra socks",
+    nameKey: "recommendations.extraSocks",
     category: "clothing",
     weightGrams: 100,
   },
@@ -192,21 +202,24 @@ const LONG_TRIP_ITEMS: RecommendationItem[] = [
 
 const VERY_LONG_TRIP_ITEMS: RecommendationItem[] = [
   {
-    name: "Extra food supplies",
+    nameKey: "recommendations.extraFoodSupplies",
     category: "food",
     weightGrams: 800,
   },
   {
-    name: "Additional hygiene supplies",
+    nameKey: "recommendations.additionalHygieneSupplies",
     category: "hygiene",
     weightGrams: 150,
   },
 ];
 
-function toItem(recommendation: RecommendationItem): Item {
+function toItem(
+  recommendation: RecommendationItem,
+  t: (key: string) => string,
+): Item {
   return {
     id: createId(),
-    name: recommendation.name,
+    name: t(recommendation.nameKey),
     category: recommendation.category,
     weightGrams: recommendation.weightGrams,
     isPacked: false,
@@ -217,6 +230,7 @@ function toItem(recommendation: RecommendationItem): Item {
 export function generateRecommendations(
   durationDays: number,
   weatherCondition: WeatherCondition,
+  t: (key: string) => string = translateEnglishRecommendation,
 ): Item[] {
   const recommendations: RecommendationItem[] = [
     ...BASE_ITEMS,
@@ -231,19 +245,20 @@ export function generateRecommendations(
     recommendations.push(...VERY_LONG_TRIP_ITEMS);
   }
 
-  return recommendations.map(toItem);
+  return recommendations.map((recommendation) => toItem(recommendation, t));
 }
 
 export function createTrip(
   title: string,
   durationDays: number,
   weatherCondition: WeatherCondition,
+  t: (key: string) => string = translateEnglishRecommendation,
 ): Trip {
   return {
     id: createId(),
     title,
     durationDays,
     weatherCondition,
-    items: generateRecommendations(durationDays, weatherCondition),
+    items: generateRecommendations(durationDays, weatherCondition, t),
   };
 }

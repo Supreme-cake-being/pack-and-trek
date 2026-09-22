@@ -89,7 +89,7 @@ export default function NewTripScreen() {
     try {
       setSaving(true);
 
-      const trip = createTrip(title.trim(), days, weather);
+      const trip = createTrip(title.trim(), days, weather, t);
 
       await saveTrip(trip);
 
