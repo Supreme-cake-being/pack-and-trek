@@ -11,12 +11,14 @@ import {
 import { useState } from "react";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "../src/constants/colors";
 import { WeatherCondition } from "../src/types";
 import { createTrip } from "../src/data/recommendations";
 import { saveTrip } from "../src/storage/storage";
 import { useI18n } from "../src/i18n";
+import { BackButton } from "../src/components/BackButton";
 
 const WEATHER_OPTIONS: {
   value: WeatherCondition;
@@ -58,6 +60,8 @@ const WEATHER_OPTIONS: {
 
 export default function NewTripScreen() {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
+
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("2");
   const [weather, setWeather] = useState<WeatherCondition>("sunny");
@@ -67,12 +71,18 @@ export default function NewTripScreen() {
     const days = Number(duration);
 
     if (!title.trim()) {
-      Alert.alert(t("validation.tripNameRequired"), t("validation.tripNameRequiredDescription"));
+      Alert.alert(
+        t("validation.tripNameRequired"),
+        t("validation.tripNameRequiredDescription"),
+      );
       return;
     }
 
     if (!Number.isInteger(days) || days < 1) {
-      Alert.alert(t("validation.invalidDuration"), t("validation.invalidDurationDescription"));
+      Alert.alert(
+        t("validation.invalidDuration"),
+        t("validation.invalidDurationDescription"),
+      );
       return;
     }
 
@@ -94,9 +104,17 @@ export default function NewTripScreen() {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingTop: insets.top + 8,
+          paddingBottom: insets.bottom + 40,
+        },
+      ]}
       keyboardShouldPersistTaps="handled"
     >
+      <BackButton />
+
       <View style={styles.intro}>
         <Text style={styles.title}>{t("newTrip.introTitle")}</Text>
 
@@ -193,7 +211,6 @@ const styles = StyleSheet.create({
 
   content: {
     padding: 20,
-    paddingBottom: 40,
   },
 
   intro: {

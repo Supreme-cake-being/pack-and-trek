@@ -11,6 +11,7 @@ import {
 import { useMemo, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "../../src/constants/colors";
 import { useTrips } from "../../src/hooks/useTrips";
@@ -21,11 +22,13 @@ import { CategorySection } from "../../src/components/CategorySection";
 import { AddItemModal } from "../../src/components/AddItemModal";
 import { categories } from "../../src/constants/categories";
 import { useI18n } from "../../src/i18n";
+import { BackButton } from "../../src/components/BackButton";
 
 type Filter = "all" | "packed" | "unpacked";
 
 export default function TripDetailScreen() {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{
     id: string;
   }>();
@@ -116,36 +119,41 @@ export default function TripDetailScreen() {
   };
 
   const handleDelete = (item: Item) => {
-    Alert.alert(
-      t("confirm.deleteItem"),
-      t("trip.removeItem"),
-      [
-        {
-          text: t("common.cancel"),
-          style: "cancel",
-        },
-        {
-          text: t("common.delete"),
-          style: "destructive",
-          onPress: () =>
-            updateItems(trip.items.filter((current) => current.id !== item.id)),
-        },
-      ],
-    );
+    Alert.alert(t("confirm.deleteItem"), t("trip.removeItem"), [
+      {
+        text: t("common.cancel"),
+        style: "cancel",
+      },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: () =>
+          updateItems(trip.items.filter((current) => current.id !== item.id)),
+      },
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + 8,
+            paddingBottom: insets.bottom + 110,
+          },
+        ]}
       >
+        <BackButton />
+
         <View style={styles.tripHeader}>
           <View style={styles.tripHeaderText}>
             <Text style={styles.title}>{trip.title}</Text>
 
             <Text style={styles.subtitle}>
-              {trip.durationDays} {t("trip.days")} • {t(`weather.${trip.weatherCondition}`)}
+              {trip.durationDays} {t("trip.days")} •{" "}
+              {t(`weather.${trip.weatherCondition}`)}
             </Text>
           </View>
 
@@ -208,7 +216,9 @@ export default function TripDetailScreen() {
             key={category.id}
             titleKey={category.labelKey}
             icon={category.icon}
-            items={filteredItems.filter((item) => item.category === category.id)}
+            items={filteredItems.filter(
+              (item) => item.category === category.id,
+            )}
             onToggle={toggleItem}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -232,7 +242,15 @@ export default function TripDetailScreen() {
         )}
       </ScrollView>
 
-      <Pressable style={styles.addButton} onPress={handleAdd}>
+      <Pressable
+        style={[
+          styles.addButton,
+          {
+            bottom: insets.bottom + 16,
+          },
+        ]}
+        onPress={handleAdd}
+      >
         <Ionicons name="add" size={24} color={colors.white} />
 
         <Text style={styles.addButtonText}>{t("trip.addItem")}</Text>
@@ -355,7 +373,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     right: 20,
-    bottom: 20,
     height: 54,
     backgroundColor: colors.forest,
     borderRadius: 17,

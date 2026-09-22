@@ -9,6 +9,7 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTrips } from "../src/hooks/useTrips";
 import { TripCard } from "../src/components/TripCard";
@@ -18,7 +19,8 @@ import { useI18n } from "../src/i18n";
 
 export default function HomeScreen() {
   const { trips, loading, removeTrip, reload } = useTrips();
-  const { t } = useI18n();
+  const { t, language, setLanguage } = useI18n();
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -27,36 +29,49 @@ export default function HomeScreen() {
   );
 
   const handleDelete = (tripId: string) => {
-    Alert.alert(
-      t("confirm.deleteTrip"),
-      t("confirm.deleteTripDescription"),
-      [
-        {
-          text: t("common.cancel"),
-          style: "cancel",
-        },
-        {
-          text: t("common.delete"),
-          style: "destructive",
-          onPress: () => removeTrip(tripId),
-        },
-      ],
-    );
+    Alert.alert(t("confirm.deleteTrip"), t("confirm.deleteTripDescription"), [
+      {
+        text: t("common.cancel"),
+        style: "cancel",
+      },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: () => removeTrip(tripId),
+      },
+    ]);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.hero}>
+      <View
+        style={[
+          styles.hero,
+          {
+            paddingTop: insets.top + 20,
+          },
+        ]}
+      >
         <View>
           <Text style={styles.eyebrow}>{t("home.adventures")}</Text>
 
-          <Text style={styles.heading}>
-            {t("home.tagline")}
-          </Text>
+          <Text style={styles.heading}>{t("home.tagline")}</Text>
         </View>
 
-        <View style={styles.heroIcon}>
-          <Ionicons name="trail-sign" size={34} color={colors.forest} />
+        <View style={styles.heroActions}>
+          <Pressable
+            style={styles.languageButton}
+            onPress={() => setLanguage(language === "uk" ? "en" : "uk")}
+          >
+            <Ionicons name="language-outline" size={18} color={colors.forest} />
+            <Text style={styles.languageText}>
+              {language === "uk" ? "EN" : "UA"}
+            </Text>
+          </Pressable>
+
+          <View style={styles.heroIcon}>
+            <Ionicons name="trail-sign" size={30} color={colors.forest} />
+          </View>
         </View>
       </View>
 
@@ -85,7 +100,15 @@ export default function HomeScreen() {
         />
       )}
 
-      <Pressable style={styles.fab} onPress={() => router.push("/new-trip")}>
+      <Pressable
+        style={[
+          styles.fab,
+          {
+            bottom: insets.bottom + 16,
+          },
+        ]}
+        onPress={() => router.push("/new-trip")}
+      >
         <Ionicons name="add" size={28} color={colors.white} />
 
         <Text style={styles.fabText}>{t("home.planNewTrip")}</Text>
@@ -102,7 +125,6 @@ const styles = StyleSheet.create({
 
   hero: {
     paddingHorizontal: 20,
-    paddingTop: 20,
     paddingBottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -133,9 +155,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  heroText: {
+    flex: 1,
+    paddingRight: 12,
+  },
+
+  heroActions: {
+    alignItems: "center",
+    gap: 8,
+  },
+
+  languageButton: {
+    height: 36,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+
+  languageText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: colors.forest,
+  },
+
   list: {
     paddingHorizontal: 20,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
 
   loading: {
@@ -150,7 +200,6 @@ const styles = StyleSheet.create({
 
   fab: {
     position: "absolute",
-    bottom: 24,
     right: 20,
     backgroundColor: colors.forest,
     borderRadius: 18,
